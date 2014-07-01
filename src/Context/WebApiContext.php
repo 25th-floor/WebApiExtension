@@ -58,14 +58,6 @@ class WebApiContext implements ApiClientAwareContext
         $this->client = $client;
     }
 
-	/**
-	 * @return \GuzzleHttp\Message\ResponseInterface
-	 */
-	public function getResponse()
-	{
-		return $this->response;
-	}
-
     /**
      * @return \GuzzleHttp\Message\ResponseInterface
      */
@@ -331,6 +323,22 @@ class WebApiContext implements ApiClientAwareContext
         Assertions::assertNotRegExp('/' . preg_quote($type) . '/', $this->response->getHeader($header));
     }
 
+
+    /**
+     * Prints last requests header & body, useful for debugging api handshakes
+     *
+     * @Then print request
+     */
+    public function printRequest()
+    {
+        $request = $this->request;
+        if ($request == null) return;
+
+        foreach ($request->getHeaders() as $name => $values) {
+            echo $name . ": " . implode(", ", $values) . "\n";
+        }
+        echo "\n" . $request->getBody();
+    }
 
     /**
      * Prints last response body.
