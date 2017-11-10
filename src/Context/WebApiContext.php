@@ -303,13 +303,20 @@ class WebApiContext implements ApiClientAwareContext
     public function theResponseShouldContainJsonSubset(PyStringNode $jsonString)
     {
         $etalon = json_decode($this->replacePlaceHolder($jsonString->getRaw()), true);
-        $actual = $this->response->json();
+        $actual = json_decode($this->response->getBody(), true);
 
         if (null === $etalon) {
             throw new \RuntimeException(
                 "Can not convert etalon to json:\n" . $this->replacePlaceHolder($jsonString->getRaw())
             );
         }
+
+        if (null === $actual) {
+            throw new \RuntimeException(
+              "Can not convert actual to json:\n" . $this->replacePlaceHolder((string) $this->response->getBody())
+            );
+        }
+
         $this->assertArrayContainsRecursive($etalon, $actual);
     }
 
